@@ -40,17 +40,30 @@ app.post("/thumbnailUpload", upload.single("productThumbnail"), (req, res) => {
   }
 });
 
-app.get("/products", (req, res) => {
-  const q = "SELECT * FROM Employment.job_list;";
+app.get("/jobs", (req, res) => {
+  const q = "SELECT * FROM Employment.job_list ORDER BY creation_date DESC;";
   db.query(q, (err, data) => {
     console.log(err, data);
     if (err) return res.json({ error: err.sqlMessage });
     else return res.json({ data });
   });
 });
-app.post("/products", (req, res) => {
-  const q = `insert into product(productId, productTitle, productDescription, productPrice, availableQuantity, productThumbnail)
-      values(?)`;
+
+app.get("/sites", (req, res) => {
+  const q = "SELECT * FROM Employment.site;";
+  db.query(q, (err, data) => {
+    console.log(err, data);
+    if (err) return res.json({ error: err.sqlMessage });
+    else return res.json({ data });
+  });
+});
+
+app.post("/jobs", (req, res) => {
+  // const q = `insert into product(productId, productTitle, productDescription, productPrice, availableQuantity, productThumbnail)
+  //     values(?)`;
+
+  const q = `call create_job(?);`;
+
   const values = [...Object.values(req.body)];
   console.log("insert", values);
   db.query(q, [values], (err, data) => {

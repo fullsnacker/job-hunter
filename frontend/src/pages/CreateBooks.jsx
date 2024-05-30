@@ -6,25 +6,27 @@ import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 const CreateBooks = () => {
-	const [title, setTitle] = useState('');
-	const [author, setAuthor] = useState('');
-	const [publishYear, setPublishYear] = useState('');
+	const [jobTitle, setJobTitle] = useState('');
+	const [companyName, setCompanyName] = useState('');
+	const [site, setSite] = useState('Linkedin');
+	const [expertise, setExpertise] = useState('');
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
 
-	const handleSaveBook = () => {
+	const handleSaveJob = () => {
 		const data = {
-			title,
-			author,
-			publishYear
+			site,
+			jobTitle,
+			companyName,
+			expertise
 		};
 		setLoading(true);
 		axios
-			.post('http://localhost:8081/books', data)
+			.post('http://localhost:8081/jobs', data)
 			.then(() => {
 				setLoading(false);
-				enqueueSnackbar('Book Created successfully', { variant: 'success' });
+				enqueueSnackbar('Job Created successfully', { variant: 'success' });
 				navigate('/');
 			})
 			.catch((error) => {
@@ -45,30 +47,39 @@ const CreateBooks = () => {
 					<label className="text-xl mr-4 text-gray-500">Title</label>
 					<input
 						type="text"
-						value={title}
-						onChange={(e) => setTitle(e.target.value)}
+						value={jobTitle}
+						onChange={(e) => setJobTitle(e.target.value)}
 						className="border-2 border-gray-500 px-4 py-2 w-full"
 					/>
 				</div>
 				<div className="my-4">
-					<label className="text-xl mr-4 text-gray-500">Author</label>
+					<label className="text-xl mr-4 text-gray-500">Company</label>
 					<input
 						type="text"
-						value={author}
-						onChange={(e) => setAuthor(e.target.value)}
+						value={companyName}
+						onChange={(e) => setCompanyName(e.target.value)}
 						className="border-2 border-gray-500 px-4 py-2  w-full "
 					/>
 				</div>
 				<div className="my-4">
-					<label className="text-xl mr-4 text-gray-500">Publish Year</label>
+					<label className="text-xl mr-4 text-gray-500">Expertise</label>
 					<input
-						type="number"
-						value={publishYear}
-						onChange={(e) => setPublishYear(e.target.value)}
+						type="text"
+						value={expertise}
+						onChange={(e) => setExpertise(e.target.value)}
 						className="border-2 border-gray-500 px-4 py-2  w-full "
 					/>
 				</div>
-				<button className="p-2 bg-sky-300 m-8" onClick={handleSaveBook}>
+				<div className="my-4">
+					<label className="text-xl mr-4 text-gray-500">Site</label>
+					<input
+						type="text"
+						value={site}
+						onChange={(e) => setSite(e.target.value)}
+						className="border-2 border-gray-500 px-4 py-2  w-full "
+					/>
+				</div>
+				<button className="p-2 bg-sky-300 m-8" onClick={handleSaveJob}>
 					Save
 				</button>
 			</div>

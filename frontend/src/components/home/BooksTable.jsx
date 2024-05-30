@@ -3,12 +3,19 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlineDelete } from 'react-icons/md';
 import { useState } from 'react';
+import { MdOutlineAddBox } from 'react-icons/md';
 
 const BooksTable = ({ books }) => {
 	const [page, setPage] = useState(1);
 
 	return (
 		<div className="container">
+			<div className="flex justify-between items-center">
+				<h1 className="text-3xl my-8">Job List</h1>
+				<Link to="/books/create">
+					<MdOutlineAddBox className="text-sky-800 text-4xl" />
+				</Link>
+			</div>
 			<table className="w-full border-separate border-spacing-2">
 				<thead>
 					<tr>
