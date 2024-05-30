@@ -16,6 +16,21 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Temporary table structure for view `application_report`
+--
+
+DROP TABLE IF EXISTS `application_report`;
+/*!50001 DROP VIEW IF EXISTS `application_report`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `application_report` AS SELECT
+ 1 AS `name`,
+  1 AS `search_date`,
+  1 AS `minutes`,
+  1 AS `applications` */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `benefit`
 --
 
@@ -44,7 +59,7 @@ CREATE TABLE `company` (
   UNIQUE KEY `name_UNIQUE` (`name`),
   KEY `fk_company_1` (`company_category_id`),
   CONSTRAINT `fk_company_1` FOREIGN KEY (`company_category_id`) REFERENCES `company_category` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +93,7 @@ CREATE TABLE `company_category` (
   `category` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `category_UNIQUE` (`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +116,7 @@ CREATE TABLE `contact` (
   KEY `fk_contact_job` (`job_id`),
   CONSTRAINT `fk_contact_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_contact_job` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +203,7 @@ CREATE TABLE `job` (
   CONSTRAINT `job_job_location_id_foreign` FOREIGN KEY (`job_location_id`) REFERENCES `job_location` (`id`),
   CONSTRAINT `job_job_method_id_foreign` FOREIGN KEY (`job_method_id`) REFERENCES `job_method` (`id`),
   CONSTRAINT `job_site_id_foreign` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +220,7 @@ CREATE TABLE `job_application` (
   PRIMARY KEY (`id`),
   KEY `job_application_job_id_foreign` (`job_id`),
   CONSTRAINT `job_application_job_id_foreign` FOREIGN KEY (`job_id`) REFERENCES `job` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,7 +310,7 @@ CREATE TABLE `job_search_history` (
   PRIMARY KEY (`id`),
   KEY `fk_job_search_history_site` (`site_id`),
   CONSTRAINT `fk_job_search_history_site` FOREIGN KEY (`site_id`) REFERENCES `site` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,6 +388,62 @@ CREATE TABLE `step_history` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping routines for database 'Employment'
+--
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `create_job` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`fullsnacker`@`localhost` PROCEDURE `create_job`(
+input_site char(100),
+input_title char(100),
+input_company char(100),
+input_expertise char(100))
+BEGIN
+INSERT IGNORE INTO `Employment`.`company`(`name`,`company_category_id`) VALUES (input_company, 2);
+
+INSERT INTO `Employment`.`job` (`site_id`, `company_id`, `job_category_id`, `job_expertise_id`, `description`) 
+VALUES 
+((SELECT id FROM Employment.site WHERE name = input_site), (SELECT id FROM Employment.company WHERE name = input_company), 
+(SELECT id FROM Employment.job_category WHERE category = 'REACT DEV'), 
+(SELECT id FROM Employment.job_expertise where expertise = input_expertise), input_title);	
+
+INSERT INTO `Employment`.`job_application` (`job_id`) 
+VALUES ((SELECT j.id FROM Employment.job j 
+		inner join Employment.company c ON c.id = j.company_id where j.description = input_title and c.name = input_company));
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `application_report`
+--
+
+/*!50001 DROP VIEW IF EXISTS `application_report`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`fullsnacker`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `application_report` AS select `s`.`name` AS `name`,cast(`js`.`start_date` as date) AS `search_date`,round(time_to_sec(timediff(`js`.`end_date`,`js`.`start_date`)) / 60,0) AS `minutes`,count(`ja`.`id`) AS `applications` from (((`job_search_history` `js` join `site` `s` on(`s`.`id` = `js`.`site_id`)) join `job` `j` on(`j`.`creation_date` > `js`.`start_date` and `j`.`creation_date` < `js`.`end_date`)) join `job_application` `ja` on(`ja`.`job_id` = `j`.`id`)) group by `s`.`name`,cast(`js`.`start_date` as date) order by `js`.`start_date` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
 -- Final view structure for view `job_list`
 --
 
@@ -399,4 +470,4 @@ CREATE TABLE `step_history` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-29 17:10:09
+-- Dump completed on 2024-05-30 12:48:37
