@@ -5,13 +5,13 @@ const cors = require("cors");
 const multer = require("multer");
 const fs = require("fs");
 require("dotenv").config();
-console.log(process.env);
-console.log(process.env.DB_PASSWORD);
+//console.log(process.env);
+//console.log(process.env.DB_PASSWORD);
 const db = mysql.createConnection({
-  host: "localhost",
+  host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  database: "Employment",
+  database: process.env.DB_SCHEMA,
 });
 
 const app = express();
@@ -87,5 +87,6 @@ app.delete("/jobs/:jobs", (req, res) => {
 });
 
 app.listen(8081, () => {
-  console.log("listening");
+  console.log("Server started");
+  console.log("Listening to port 8081...");
 });
